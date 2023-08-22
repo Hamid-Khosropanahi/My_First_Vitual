@@ -6,7 +6,7 @@ import coverage
 
 from flask import Flask
 from flask_migrate import Migrate
-from flask.cli import FlaskGroup
+from flask.cli import FlaskGroup, click
 
 from project.server import app, db, models
 
@@ -64,6 +64,9 @@ def create_db():
 def drop_db():
     """Drops the db tables."""
     db.drop_all()
+
+
+
 
 
 if __name__ == '__main__':
