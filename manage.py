@@ -1,12 +1,14 @@
 # manage.py
 
-
 import os
 import unittest
 import coverage
 
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
+from flask import Flask
+from flask_migrate import Migrate
+from flask.cli import FlaskGroup
+
+from project.server import app, db, models
 
 COV = coverage.coverage(
     branch=True,
@@ -19,16 +21,11 @@ COV = coverage.coverage(
 )
 COV.start()
 
-from project.server import app, db, models
-
 migrate = Migrate(app, db)
-manager = Manager(app)
-
-# migrations
-manager.add_command('db', MigrateCommand)
+cli = FlaskGroup(app)
 
 
-@manager.command
+@cli.command()
 def test():
     """Runs the unit tests without test coverage."""
     tests = unittest.TestLoader().discover('project/tests', pattern='test*.py')
@@ -38,7 +35,7 @@ def test():
     return 1
 
 
-@manager.command
+@cli.command()
 def cov():
     """Runs the unit tests with coverage."""
     tests = unittest.TestLoader().discover('project/tests')
@@ -57,17 +54,17 @@ def cov():
     return 1
 
 
-@manager.command
+@cli.command()
 def create_db():
     """Creates the db tables."""
     db.create_all()
 
 
-@manager.command
+@cli.command()
 def drop_db():
     """Drops the db tables."""
     db.drop_all()
 
 
 if __name__ == '__main__':
-    manager.run()
+    cli()
