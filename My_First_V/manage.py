@@ -4,11 +4,10 @@ import os
 import unittest
 import coverage
 
-from flask import Flask
+# from flask import Flask
 from flask_migrate import Migrate
 from flask.cli import FlaskGroup
 
-from project.server import app, db
 
 COV = coverage.coverage(
     branch=True,
@@ -20,9 +19,10 @@ COV = coverage.coverage(
     ]
 )
 COV.start()
+from project.server import app, db,models
 
 migrate = Migrate(app, db)
-cli = FlaskGroup(app)
+cli = FlaskGroup(app,models)
 
 
 @cli.command()
